@@ -12,8 +12,6 @@ import traceback
 import argparse
 import subprocess as sp
 import unicodedata
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 from os.path import dirname, join
 
