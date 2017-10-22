@@ -12,44 +12,43 @@ import traceback
 import argparse
 import subprocess as sp
 import unicodedata
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 from os.path import dirname, join
 
-from doge import wow
+from quin import rua
 
 ROOT = join(dirname(__file__), 'static')
-DEFAULT_DOGE = 'doge.txt'
+DEFAULT_QUIN = 'quin.txt'
 
 
-class Doge(object):
+class Quin(object):
     def __init__(self, tty, ns):
         self.tty = tty
         self.ns = ns
-        self.doge_path = join(ROOT, ns.doge_path or DEFAULT_DOGE)
+        self.quin_path = join(ROOT, ns.quin_path or DEFAULT_QUIN)
         if ns.frequency:
             # such frequency based
             self.words = \
-                wow.FrequencyBasedDogeDeque(*wow.WORD_LIST, step=ns.step)
+                rua.FrequencyBasedQuinDeque(*rua.WORD_LIST, step=ns.step)
         else:
-            self.words = wow.DogeDeque(*wow.WORD_LIST)
+            self.words = rua.QuinDeque(*rua.WORD_LIST)
 
     def setup(self):
-        # Setup seasonal data
-        self.setup_seasonal()
-
         if self.tty.pretty:
             # stdout is a tty, load Shibe and calculate how wide he is
-            doge = self.load_doge()
-            max_doge = max(map(clean_len, doge)) + 15
+            quin = self.load_quin()
+            max_quin = max(map(clean_len, quin)) + 15
         else:
             # stdout is being piped and we should not load Shibe
-            doge = []
-            max_doge = 15
+            quin = []
+            max_quin = 15
 
-        if self.tty.width < max_doge:
+        if self.tty.width < max_quin:
             # Shibe won't fit, so abort.
-            sys.stderr.write('wow, such small terminal\n')
-            sys.stderr.write('no doge under {0} column\n'.format(max_doge))
+            sys.stderr.write('rua, such small terminal\n')
+            sys.stderr.write('no quin under {0} column\n'.format(max_quin))
             sys.exit(1)
 
         # Check for prompt height so that we can fill the screen minus how high
@@ -58,9 +57,9 @@ class Doge(object):
         line_count = len(prompt) + 1
 
         # Create a list filled with empty lines and Shibe at the bottom.
-        fill = range(self.tty.height - len(doge) - line_count)
+        fill = range(self.tty.height - len(quin) - line_count)
         self.lines = ['\n' for x in fill]
-        self.lines += doge
+        self.lines += quin
 
         # Try to fetch data fed thru stdin
         had_stdin = self.get_stdin_data()
@@ -72,50 +71,9 @@ class Doge(object):
         # Apply the text around Shibe
         self.apply_text()
 
-    def setup_seasonal(self):
-        """
-        Check if there's some seasonal holiday going on, setup appropriate
-        Shibe picture and load holiday words.
-
-        Note: if there are two or more holidays defined for a certain date,
-        the first one takes precedence.
-
-        """
-
-        # If we've specified a season, just run that one
-        if self.ns.season:
-            return self.load_season(self.ns.season)
-
-        # If we've specified another doge or no doge at all, it does not make
-        # sense to use seasons.
-        if self.ns.doge_path is not None and not self.ns.no_shibe:
-            return
-
-        now = datetime.datetime.now()
-
-        for season, data in wow.SEASONS.items():
-            start, end = data['dates']
-            start_dt = datetime.datetime(now.year, start[0], start[1])
-
-            # Be sane if the holiday season spans over New Year's day.
-            end_dt = datetime.datetime(
-                now.year + (start[0] > end[0] and 1 or 0), end[0], end[1])
-
-            if start_dt <= now <= end_dt:
-                # Wow, much holiday!
-                return self.load_season(season)
-
-    def load_season(self, season_key):
-        if season_key == 'none':
-            return
-
-        season = wow.SEASONS[season_key]
-        self.doge_path = join(ROOT, season['pic'])
-        self.words.extend(season['words'])
-
     def apply_text(self):
         """
-        Apply text around doge
+        Apply text around quin
 
         """
 
@@ -130,41 +88,41 @@ class Doge(object):
 
             word = self.words.get()
 
-            # If first or last line, or a random selection, use standalone wow.
+            # If first or last line, or a random selection, use standalone rua.
             if i == 1 or i == len(affected) or random.choice(range(20)) == 0:
-                word = 'wow'
+                word = 'rua'
 
-            # Generate a new DogeMessage, possibly based on a word.
-            self.lines[target] = DogeMessage(self, line, word).generate()
+            # Generate a new QuinMessage, possibly based on a word.
+            self.lines[target] = QuinMessage(self, line, word).generate()
 
-    def load_doge(self):
+    def load_quin(self):
         """
         Return pretty ASCII Shibe.
 
-        wow
+        rua
 
         """
 
         if self.ns.no_shibe:
             return ['']
 
-        with open(self.doge_path) as f:
+        with open(self.quin_path) as f:
             if sys.version_info < (3, 0):
                 if locale.getpreferredencoding() == 'UTF-8':
-                    doge_lines = [l.decode('utf-8') for l in f.xreadlines()]
+                    quin_lines = [l.decode('utf-8') for l in f.xreadlines()]
                 else:
                     # encode to printable characters, leaving a space in place
                     # of untranslatable characters, resulting in a slightly
-                    # blockier doge on non-UTF8 terminals
-                    doge_lines = [
+                    # blockier quin on non-UTF8 terminals
+                    quin_lines = [
                         l.decode('utf-8')
                         .encode(locale.getpreferredencoding(), 'replace')
                         .replace('?', ' ')
                         for l in f.xreadlines()
                     ]
             else:
-                doge_lines = [l for l in f.readlines()]
-            return doge_lines
+                quin_lines = [l for l in f.readlines()]
+            return quin_lines
 
     def get_real_data(self):
         """
@@ -234,7 +192,7 @@ class Doge(object):
                      for match in rx_word.finditer(line.lower())]
         if self.ns.filter_stopwords:
             word_list = self.filter_words(
-                word_list, stopwords=wow.STOPWORDS,
+                word_list, stopwords=rua.STOPWORDS,
                 min_length=self.ns.min_length)
 
         self.words.extend(word_list)
@@ -250,7 +208,7 @@ class Doge(object):
         procs = set()
 
         try:
-            # POSIX ps, so it should work in most environments where doge would
+            # POSIX ps, so it should work in most environments where quin would
             p = sp.Popen(['ps', '-A', '-o', 'comm='], stdout=sp.PIPE)
             output, error = p.communicate()
 
@@ -269,7 +227,7 @@ class Doge(object):
             random.shuffle(proc_list)
             return proc_list
 
-    def print_doge(self):
+    def print_quin(self):
         for line in self.lines:
             if sys.version_info < (3, 0):
                 line = line.encode('utf8')
@@ -277,29 +235,29 @@ class Doge(object):
         sys.stdout.flush()
 
 
-class DogeMessage(object):
+class QuinMessage(object):
     """
     A randomly placed and randomly colored message
 
     """
 
-    def __init__(self, doge, occupied, word):
-        self.doge = doge
-        self.tty = doge.tty
+    def __init__(self, quin, occupied, word):
+        self.quin = quin
+        self.tty = quin.tty
         self.occupied = occupied
         self.word = word
 
     def generate(self):
-        if self.word == 'wow':
-            # Standalone wow. Don't apply any prefixes or suffixes.
+        if self.word == 'rua':
+            # Standalone rua. Don't apply any prefixes or suffixes.
             msg = self.word
         else:
             # Add a prefix.
-            msg = u'{0} {1}'.format(wow.PREFIXES.get(), self.word)
+            msg = '{0}{1}'.format(rua.PREFIXES.get(), self.word)
 
             # Seldomly add a suffix as well.
             if random.choice(range(15)) == 0:
-                msg += u' {0}'.format(wow.SUFFIXES.get())
+                msg += u' {0}'.format(rua.SUFFIXES.get())
 
         # Calculate the maximum possible spacer
         interval = self.tty.width - onscreen_len(msg)
@@ -308,21 +266,21 @@ class DogeMessage(object):
         if interval < 1:
             # The interval is too low, so the message can not be shown without
             # spilling over to the subsequent line, borking the setup.
-            # Return the doge slice that was in this row if there was one,
+            # Return the quin slice that was in this row if there was one,
             # and a line break, effectively disabling the row.
             return self.occupied + "\n"
 
         # Apply spacing
-        msg = u'{0}{1}'.format(' ' * random.choice(range(interval)), msg)
+        msg = '{0}{1}'.format(' ' * random.choice(range(interval)), msg)
 
         if self.tty.pretty:
             # Apply pretty ANSI color coding.
-            msg = u'\x1b[1m\x1b[38;5;{0}m{1}\x1b[39m\x1b[0m'.format(
-                wow.COLORS.get(), msg
+            msg = '\x1b[1m\x1b[38;5;{0}m{1}\x1b[39m\x1b[0m'.format(
+                rua.COLORS.get(), msg
             )
 
         # Line ends are pretty cool guys, add one of those.
-        return u'{0}{1}\n'.format(self.occupied, msg)
+        return '{0}{1}\n'.format(self.occupied, msg)
 
 
 class TTYHandler(object):
@@ -415,25 +373,19 @@ def onscreen_len(s):
 
 
 def setup_arguments():
-    parser = argparse.ArgumentParser('doge')
+    parser = argparse.ArgumentParser('quin')
 
     parser.add_argument(
         '--shibe',
-        help='wow shibe file',
-        dest='doge_path',
+        help='rua shibe file',
+        dest='quin_path',
         choices=os.listdir(ROOT)
     )
 
     parser.add_argument(
         '--no-shibe',
         action="store_true",
-        help="wow no doge show :("
-    )
-
-    parser.add_argument(
-        '--season',
-        help='wow shibe season congrate',
-        choices=sorted(wow.SEASONS.keys()) + ['none']
+        help="rua no quin show :("
     )
 
     parser.add_argument(
@@ -445,7 +397,7 @@ def setup_arguments():
     parser.add_argument(
         '--step',
         help='beautiful step',  # how much to step
-        #  between ranks in FrequencyBasedDogeDeque
+        #  between ranks in FrequencyBasedQuinDeque
         type=int,
         default=2,
     )
@@ -489,9 +441,9 @@ def main():
         tty.width = ns.max_width
 
     try:
-        shibe = Doge(tty, ns)
+        shibe = Quin(tty, ns)
         shibe.setup()
-        shibe.print_doge()
+        shibe.print_quin()
 
     except (UnicodeEncodeError, UnicodeDecodeError):
         # Some kind of unicode error happened. This is usually because the
@@ -502,25 +454,25 @@ def main():
 
         lang = os.environ.get('LANG')
         if not lang:
-            print('wow error: broken $LANG, so fail')
+            print('rua error: broken $LANG, so fail')
             return 3
 
         if not lang.endswith('UTF-8'):
             print(
-                "wow error: locale '{0}' is not UTF-8.  ".format(lang) +
-                "doge needs UTF-8 to print Shibe.  Please set your system to "
+                "rua error: locale '{0}' is not UTF-8.  ".format(lang) +
+                "quin needs UTF-8 to print Shibe.  Please set your system to "
                 "use a UTF-8 locale."
             )
             return 2
 
         print(
-            "wow error: Unknown unicode error.  Please report at "
-            "https://github.com/thiderman/doge/issues and include output from "
+            "rua error: Unknown unicode error.  Please report at "
+            "https://github.com/journey-ad/quin/issues and include output from "
             "/usr/bin/locale"
         )
         return 1
 
 
-# wow very main
+# rua very main
 if __name__ == "__main__":
     sys.exit(main())

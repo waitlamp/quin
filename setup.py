@@ -1,15 +1,15 @@
 from setuptools import setup
 
 setup(
-    name='doge',
-    version='3.6.0',
-    url='https://github.com/thiderman/doge',
-    author='Lowe Thiderman',
-    author_email='lowe.thiderman@gmail.com',
-    description=('wow very terminal doge'),
+    name='quin',
+    version='1.0.0',
+    url='https://github.com/journey-ad/quin',
+    author='journey.ad',
+    author_email='journey.adc@gmail.com',
+    description=('rua！真实终端大秦话'),
     license='MIT',
-    packages=['doge'],
-    package_data={'doge': ['static/*.txt']},
+    packages=['quin'],
+    package_data={'quin': ['static/*.txt']},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -17,5 +17,5 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 2',
     ],
-    entry_points={'console_scripts': ['doge = doge.core:main']},
+    entry_points={'console_scripts': ['quin = quin.core:main']},
 )

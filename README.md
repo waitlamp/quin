@@ -1,51 +1,42 @@
-doge
+quin
 ====
 
-![wow screenshot](http://i.imgur.com/HxH9qka.png)
+![rua screenshot](https://img.imjad.cn/images/2017/10/22/Screenshot-20171022172459-984x592.png)
 
 
-**doge** is a simple motd script based on the slightly stupid but very funny
-[doge meme][doge]. It prints random grammatically incorrect statements that are
-sometimes based on things from your computer.
+**quin** 是一个简单的 motd 脚本，内容基于一种由大秦后人，“现在在斗鱼TV~~微博~~上班，每天都会摸鱼” 的主播Mr.Quin所建立的 [大秦话][quin]。它会输出一些随机的大秦话，其中有时会穿插基于你计算机上的东西。
 
-For more information about getting a setup like the one in the screenshot, see
-[this dotfiles repo][shameless].
+截图中使用的 shell 为 [FISH][fish-shell]
 
-## Features
+## 特性
 
-* Randomly placed and colored random strings, complete with broken english.
-* Awesome Shibe in the terminal.
-* Fetching of system data, such as hostname, running processes, current user
-  and `$EDITOR`.
-* If you have [lolcat][lolcat], you can do this gem:
-  `while true; do doge | lolcat -a -d 100 -s 100 -p 1; done`
+* 随机放置和着色的随机字符串，组成一段大秦话
+* 帮助各位 new ass 时刻学习大秦话
+* 获取系统数据，如主机名、正在运行的进程、当前用户和 `$EDITOR`
+* 如果你有 [lolcat][lolcat]，你可以这样做：
+  `while true; do quin | lolcat -a -d 100 -s 100 -p 1; done`
   (thx [hom3chuk][hom3chuk])
-* stdin support: `ls /usr/bin | doge` will doge-print some of the executables
-  found in /usr/bin. wow. There are also multiple command line switches that
-  control filtering and statistical frequency of words. See `doge -h`, wow.
+* 支持管道连接： `ls /usr/bin | quin` 将打印在 /usr/bin 中找到的一些可执行文件
+  还有一些其他的参数开关，详情请看 `quin -h` RUA！
 
-## Installation
+## 安装
 
-`pip install doge`
+`pip install quin`
 
-If you don't want to do that for whatever reason, there is a proper `setup.py`
-included, so `python setup.py install` should be just fine for that.
+如果你因为某种原因不想这么干, 执行 `python setup.py install` 也是可以的
 
-Note that if you are one of the unlucky doges to still run a Python that does
-not have argparse (<=Python2.6) you will have to install argparse manually from
-pypi. so old, very update need.
+请注意，如果你是不具有 argparse (<=Python2.6) 环境的 new ass， 您必须从 pypi 手动安装 argparse
 
-Then, just add a call to `doge` at the bottom of your shell rc file.
+然后只需把 `quin` 添加到你所用 shell 的 rc 文件底部即可
 
-## Notes
+## 提示
 
-You need a terminal that supports 256 colors running on a system that supports
-unicode.
+您需要在支持 unicode 的系统上运行支持256色的终端
 
-The terminal Shibe was created with hax0r Gimp skills and [img2xterm][i2x].
+秦先生的头像是用 Gimp 和 [img2xterm][i2x] 创建的
 
-[doge]: http://knowyourmeme.com/memes/doge
+[quin]: https://zh.moegirl.org/Mr.Quin
 [i2x]: https://github.com/rossy2401/img2xterm
 [hom3chuk]: https://github.com/hom3chuk
 [lolcat]: https://github.com/busyloop/lolcat
-[shameless]: https://github.com/thiderman/dotfiles
+[fish-shell]: https://github.com/fish-shell/fish-shell
