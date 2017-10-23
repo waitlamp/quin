@@ -37,7 +37,7 @@ class Quin(object):
         if self.tty.pretty:
             # stdout is a tty, load Shibe and calculate how wide he is
             quin = self.load_quin()
-            max_quin = max(map(clean_len, quin)) + 15
+            max_quin = max(map(clean_len, quin))
         else:
             # stdout is being piped and we should not load Shibe
             quin = []
