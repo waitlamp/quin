@@ -81,7 +81,7 @@ class Quin(object):
         affected = sorted(random.sample(range(linelen), int(linelen / 3.5)))
 
         for i, target in enumerate(affected, start=1):
-            line = self.lines[target]
+            line = self.lines[target][self.tty.width-57:]
             line = re.sub('\n', ' ', line)
 
             word = self.words.get()
