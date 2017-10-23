@@ -455,20 +455,21 @@ def main():
 
         lang = os.environ.get('LANG')
         if not lang:
-            print('rua 错误: 损坏的语言环境变量 $LANG, 所以猛男不能显示')
+            print('rua error: broken $LANG, so fail')
             return 3
 
         if not lang.endswith('UTF-8'):
             print(
-                "rua 错误: 语言 '{0}' 不是 UTF-8  ".format(lang) +
-                "猛男需要 UTF-8 才能显示。"
+                "rua error: locale '{0}' is not UTF-8.  ".format(lang) +
+                "quin9527 needs UTF-8 to print Shibe.  Please set your system to "
+                "use a UTF-8 locale."
             )
             return 2
 
         print(
-            "rua 错误: 未知 unicode 错误。在"
-            "https://github.com/journey-ad/quin/issues 报告你的问题，记得带上"
-            "/usr/bin/locale 的内容"
+            "rua error: Unknown unicode error.  Please report at "
+            "https://github.com/journey-ad/quin9527/issues and include output from "
+            "/usr/bin/locale"
         )
         return 1
 
