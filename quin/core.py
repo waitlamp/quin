@@ -45,8 +45,8 @@ class Quin(object):
 
         if self.tty.width < max_quin:
             # Shibe won't fit, so abort.
-            sys.stderr.write('rua, such small terminal\n')
-            sys.stderr.write('no quin under {0} column\n'.format(max_quin))
+            sys.stderr.write('guna！这么小的终端\n')
+            sys.stderr.write('没有猛男能在 {0} 列下存在\n'.format(max_quin))
             sys.exit(1)
 
         # Check for prompt height so that we can fill the screen minus how high
@@ -107,19 +107,20 @@ class Quin(object):
         with open(self.quin_path) as f:
             if sys.version_info < (3, 0):
                 if locale.getpreferredencoding() == 'UTF-8':
-                    quin_lines = [l.decode('utf-8') for l in f.xreadlines()]
+                    quin_lines = [' '*(self.tty.width-57) + l.decode('utf-8') for l in f.xreadlines()]
                 else:
                     # encode to printable characters, leaving a space in place
                     # of untranslatable characters, resulting in a slightly
                     # blockier quin on non-UTF8 terminals
                     quin_lines = [
+                        ' '*(self.tty.width-57) + 
                         l.decode('utf-8')
                         .encode(locale.getpreferredencoding(), 'replace')
                         .replace('?', ' ')
                         for l in f.xreadlines()
                     ]
             else:
-                quin_lines = [l for l in f.readlines()]
+                quin_lines = [' '*(self.tty.width-57) + l for l in f.readlines()]
             return quin_lines
 
     def get_real_data(self):
@@ -255,10 +256,11 @@ class QuinMessage(object):
 
             # Seldomly add a suffix as well.
             if random.choice(range(15)) == 0:
-                msg += u' {0}'.format(rua.SUFFIXES.get())
+                msg += ' {0}'.format(rua.SUFFIXES.get())
 
         # Calculate the maximum possible spacer
-        interval = self.tty.width - onscreen_len(msg)
+        zh = sum(unicodedata.east_asian_width(x) in ('F', 'W') for x in msg)        
+        interval = self.tty.width - onscreen_len(msg) - zh
         interval -= clean_len(self.occupied)
 
         if interval < 1:
@@ -270,6 +272,7 @@ class QuinMessage(object):
 
         # Apply spacing
         msg = '{0}{1}'.format(' ' * random.choice(range(interval)), msg)
+        msg = msg.ljust(self.tty.width-57-zh)[-(self.tty.width-57-zh):]
 
         if self.tty.pretty:
             # Apply pretty ANSI color coding.
@@ -278,7 +281,7 @@ class QuinMessage(object):
             )
 
         # Line ends are pretty cool guys, add one of those.
-        return '{0}{1}\n'.format(self.occupied, msg)
+        return '{0}{1}\n'.format(msg, self.occupied)
 
 
 class TTYHandler(object):
@@ -452,21 +455,20 @@ def main():
 
         lang = os.environ.get('LANG')
         if not lang:
-            print('rua error: broken $LANG, so fail')
+            print('rua 错误: 损坏的语言环境变量 $LANG, 所以猛男不能显示')
             return 3
 
         if not lang.endswith('UTF-8'):
             print(
-                "rua error: locale '{0}' is not UTF-8.  ".format(lang) +
-                "quin needs UTF-8 to print Shibe.  Please set your system to "
-                "use a UTF-8 locale."
+                "rua 错误: 语言 '{0}' 不是 UTF-8  ".format(lang) +
+                "猛男需要 UTF-8 才能显示。"
             )
             return 2
 
         print(
-            "rua error: Unknown unicode error.  Please report at "
-            "https://github.com/journey-ad/quin/issues and include output from "
-            "/usr/bin/locale"
+            "rua 错误: 未知 unicode 错误。在"
+            "https://github.com/journey-ad/quin/issues 报告你的问题，记得带上"
+            "/usr/bin/locale 的内容"
         )
         return 1
 
