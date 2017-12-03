@@ -461,14 +461,14 @@ def main():
         if not lang.endswith('UTF-8'):
             print(
                 "rua error: locale '{0}' is not UTF-8.  ".format(lang) +
-                "quin9527 needs UTF-8 to print Shibe.  Please set your system to "
+                "quin needs UTF-8 to print Shibe.  Please set your system to "
                 "use a UTF-8 locale."
             )
             return 2
 
         print(
             "rua error: Unknown unicode error.  Please report at "
-            "https://github.com/journey-ad/quin9527/issues and include output from "
+            "https://github.com/journey-ad/quin/issues and include output from "
             "/usr/bin/locale"
         )
         return 1
